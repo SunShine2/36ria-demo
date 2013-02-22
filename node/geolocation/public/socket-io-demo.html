@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>socket.io demo</title>
+    <script src="./js/lib/socket.io.js"></script>
+</head>
+<body>
+<script>
+    var socket = io.connect('http://localhost:7878');
+    socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('minghe event', { my: 'data' });
+    });
+</script>
+</body>
+</html>

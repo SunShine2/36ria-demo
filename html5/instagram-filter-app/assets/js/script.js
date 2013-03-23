@@ -1,79 +1,60 @@
 $(function() {
 
 	/*
-		In this code, we are going to do the following:
+		在这个js文件中，我们将实现如下几个功能：
 
-		1. Accept an image on drag and drop
-		2. Create a new canvas element (original), with a max size
-		   of 500x500px (customizable) and keep it in memory
-		3. Listen for clicks on the filters. When one is selected:
-				3.1 Create a clone of the original canvas
-				3.2 Remove any canvas elements currently on the page
-				3.3 Append the clone to the #photo div
-				3.4 If the selected filter is different from the "Normal"
-					one, call the Caman library. Otherwise do nothing.
-				3.5 Mark the selected filter with the "active" class
-		4. Trigger the "Normal" filter
+		1. 可以拖拽显示图片，并读取图片数据
+		2. 创建并保存一个最大尺寸为500*500px的canvas元素
+		3. 监听各个滤镜的点击事件，当滤镜被选择时，我们完成如下动作：
+				3.1 克隆一个canvas
+				3.2 删除其他canvas元素
+				3.3 将克隆的canvas添加到#photo层中
+				3.4 如果选择的滤镜不是“Normal”，调用Caman库，处理出滤镜效果
+				3.5 给元素增加个active样式名
+		4. 可以触发Normal滤镜，恢复原图效果
 
 	*/
 
 	var	maxWidth = 500,
 		maxHeight = 500,
-		photo = $('#photo'),
 		originalCanvas = null,
 		filters = $('#filters li a'),
 		filterContainer = $('#filterContainer');
 
-	// Use the fileReader plugin to listen for
-	// file drag and drop on the photo div:
-
-	photo.fileReaderJS({
+	// 使用fileReader插件实现拖拽
+	// #photo层为拖拽区域层容器
+    var photo = $('#photo');
+    photo.fileReaderJS({
 		on:{
 			load: function(e, file){
-
-				// An image has been dropped.
-
+                //向拖拽容器添加一个图片元素
 				var img = $('<img>').appendTo(photo),
 					imgWidth, newWidth,
 					imgHeight, newHeight,
 					ratio;
 
-				// Remove canvas elements left on the page
-				// from previous image drag/drops.
-
+				// 删除容器内的canvas元素
 				photo.find('canvas').remove();
 				filters.removeClass('active');
 
-				// When the image is loaded successfully,
-				// we can find out its width/height:
-
+                //图片读取成功后触发，这样才能找到图片原始宽度和高度
 				img.load(function() {
 
 					imgWidth  = this.width;
 					imgHeight = this.height;
 
-					// Calculate the new image dimensions, so they fit
-					// inside the maxWidth x maxHeight bounding box
-
+					// 控制在500*500px
 					if (imgWidth >= maxWidth || imgHeight >= maxHeight) {
-
-						// The image is too large,
-						// resize it to fit a 500x500 square!
-
 						if (imgWidth > imgHeight) {
-
-							// Wide
+                            //ratio是希望处理图片时，依旧可以保证比例的正确
 							ratio = imgWidth / maxWidth;
 							newWidth = maxWidth;
 							newHeight = imgHeight / ratio;
 
 						} else {
-
-							// Tall or square
 							ratio = imgHeight / maxHeight;
 							newHeight = maxHeight;
 							newWidth = imgWidth / ratio;
-
 						}
 
 					} else {
@@ -109,17 +90,14 @@ $(function() {
 					filters.first().click();
 				});
 
-				// Set the src of the img, which will
-				// trigger the load event when done:
+				// 设置图片的src，直接读取二进制图片数据
+				// 触发img的load事件
 
 				img.attr('src', e.target.result);
 			},
 
 			beforestart: function(file){
-
-				// Accept only images.
-				// Returning false will reject the file.
-
+                //只接受图片
 				return /^image/.test(file.type);
 			}
 		}

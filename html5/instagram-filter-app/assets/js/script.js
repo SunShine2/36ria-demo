@@ -62,13 +62,11 @@ $(function() {
 						newWidth = imgWidth;
 					}
 
-					// Create the original canvas.
-
+					// 创建一个Canvas
 					originalCanvas = $('<canvas>');
 					var originalContext = originalCanvas[0].getContext('2d');
 
-					// Set the attributes for centering the canvas
-
+					// 设置canvas元素的宽度、高度、外边距
 					originalCanvas.attr({
 						width: newWidth,
 						height: newHeight
@@ -77,16 +75,15 @@ $(function() {
 						marginLeft: -newWidth/2
 					});
 
-					// Draw the dropped image to the canvas
-					// with the new dimensions
+					// 将图片绘制到canvas元素中
 					originalContext.drawImage(this, 0, 0, newWidth, newHeight);
 
-					// We don't need this any more
+					// 移除图片元素（已经不需要了，接下来使用canvas处理就好）
 					img.remove();
 
 					filterContainer.fadeIn();
 
-					// Trigger the default "normal" filter
+					// 触发默认“普通”滤镜
 					filters.first().click();
 				});
 
@@ -103,81 +100,71 @@ $(function() {
 		}
 	});
 
-	// Listen for clicks on the filters
-
+	// 点击列表元素，切换滤镜效果
 	filters.click(function(e){
 
 		e.preventDefault();
 
 		var f = $(this);
-
+        //如果点击的滤镜没变化，不需要处理
 		if(f.is('.active')){
-			// Apply filters only once
 			return false;
 		}
-
 		filters.removeClass('active');
 		f.addClass('active');
 
-		// Clone the canvas
+		// 克隆canvas元素
 		var clone = originalCanvas.clone();
 
-		// Clone the image stored in the canvas as well
+		// 克隆在canvas中的图片
 		clone[0].getContext('2d').drawImage(originalCanvas[0],0,0);
 
-
-		// Add the clone to the page and trigger
-		// the Caman library on it
-
+		// 移除源canvas元素，并将克隆的canvas元素插入到图片容器内
 		photo.find('canvas').remove().end().append(clone);
 
+        //获取a元素上的id（滤镜名称)
 		var effect = $.trim(f[0].id);
-
+        //调用CamanJs的API
 		Caman(clone[0], function () {
 
-			// If such an effect exists, use it:
+			// 如果存在该滤镜效果，应用滤镜算法，改变图片风格
 
 			if( effect in this){
+                //设置滤镜
 				this[effect]();
+                //应用到图片上
 				this.render();
 
-				// Show the download button
+				// 显示下载按钮
 				showDownload(clone[0]);
 			}
 			else{
+                //隐藏下载按钮
 				hideDownload();
 			}
 		});
 
 	});
 
-	// Use the mousewheel plugin to scroll
-	// scroll the div more intuitively
 
+    //使用mousewheel插件处理下滤镜列表的滚动。
 	filterContainer.find('ul').on('mousewheel',function(e, delta){
-
 		this.scrollLeft -= (delta * 50);
 		e.preventDefault();
-
 	});
 
+    //下载按钮
 	var downloadImage = $('a.downloadImage');
 
 	function showDownload(canvas){
-
-
 		downloadImage.off('click').click(function(){
-			
-			// When the download link is clicked, get the
-			// DataURL of the image and set it as href:
-			
+			//获取canvas的图片数据，并添加到a元素按钮的href属性上，这样用户点击后就会调用本地工具下载
 			var url = canvas.toDataURL("image/png;base64;");
 			downloadImage.attr('href', url);
 			
 		}).fadeIn();
 
 	}
-
 	function hideDownload(){
 		downloadImage.fadeOut();
 	}

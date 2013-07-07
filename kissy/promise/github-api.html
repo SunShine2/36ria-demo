@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>基于promise调用github API</title>
+    <script src="http://a.tbcdn.cn/s/kissy/1.3.0/kissy-min.js"></script>
+</head>
+<body>
+    <h2>基于promise调用github API</h2>
+
+    <script type="text/javascript">
+        KISSY.use('node,ajax,promise',function(S,Node,io,Promise){
+            var $ = Node.all;
+            //uploader的组件库
+            var uploaderRepos = 'https://api.github.com/repos/kissygalleryteam/uploader';
+            //组件库分支
+            var uploaderBranches = 'https://api.github.com/repos/kissygalleryteam/uploader/branches';
+            //组件的issue列表
+            var uploaderIssues = 'https://api.github.com/repos/kissygalleryteam/uploader/issues';
+            io.jsonp(uploaderRepos)
+              .then(function(result){
+                  var data = result[0].data;
+                  var name = data['name'];
+                  var fork = data['forks_count'];
+                  $('body').append('<p>'+name+'共有'+fork+'人fork</p>');
+                  //请求分支列表
+                  return io.jsonp(uploaderBranches);
+              })
+              .then(function(result){
+                  var data = result[0].data;
+                  $('body').append('<p>共有'+data.length+'个分支</p>');
+                  return io.jsonp(uploaderIssues);
+              })
+              .then(function(result){
+                  var data = result[0].data;
+                  $('body').append('<p>共有'+data.length+'个issue</p>');
+              })
+        });
+    </script>
+</body>
+</html>

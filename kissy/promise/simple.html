@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Promise的简单demo</title>
+    <script src="http://a.tbcdn.cn/s/kissy/1.3.0/kissy-min.js"></script>
+</head>
+<body>
+<p>promise是commonjs社区中提出的异步规范，用于解决异步传值和回调嵌套的问题。</p>
+<p>为了方便理解，我们姑且称promise为异步链。</p>
+<h4>最简demo，这个demo只演示API，不具有实际应用价值</h4>
+
+<script type="text/javascript">
+    KISSY.use('node,promise',function(S,Node,Promise){
+        var $ = Node.all;
+        //实例化一个Defer，不用实例化Promise
+        //Defer用于控制对应promise传递的成功和失败
+        var d = new Promise.Defer();
+        //promise是Defer的核心属性， 用于外部监听，传递成功/失败的函数
+        var promise = d.promise;
+        //then方法第一个参数监听异步链成功流转到此的值，返回新的promise，并向下传递
+        promise.then(function (v) {
+            return v + 1;
+        }).then(function (v) {
+            $('body').append('<p>值为：<span style="color:red">'+v+'</span>，第二个then，值为第一个then中success回调的返回值。</p>');
+        });
+        //向异步链传值，并运转异步链
+        d.resolve(1);
+    });
+</script>
+</body>
+</html>

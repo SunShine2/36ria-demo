@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Promise传递错误消息</title>
+    <meta charset="utf-8">
+    <script src="http://a.tbcdn.cn/s/kissy/1.3.0/kissy-min.js"></script>
+</head>
+<body>
+
+<p>Promise让异步编程变得优雅~</p>
+
+<h4>这个demo演示传递错误消息</h4>
+
+<script type="text/javascript">
+    KISSY.use('promise', function (S, Promise) {
+        var d = new Promise.Defer();
+        //传递错误消息，then()执行fail（第二个）回调
+        d.reject("wrong");
+        var promise = d.promise;
+        promise.then(function (v) {
+            return v + 1;
+        }).then(function (v) {
+            alert(v);
+        }, function (reason) {
+            alert(reason); // => "wrong"
+        });
+    });
+</script>
+</body>
+</html>

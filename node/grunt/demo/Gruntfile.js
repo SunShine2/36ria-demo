@@ -1,27 +1,31 @@
 module.exports = function(grunt) {
 
-    // ¹¹½¨ÈÎÎñÅäÖÃ
+    // æ„å»ºä»»åŠ¡é…ç½®
     grunt.initConfig({
-        //¶ÁÈ¡package.jsonµÄÄÚÈİ£¬ĞÎ³É¸öjsonÊı¾İ
+        //è¯»å–package.jsonçš„å†…å®¹ï¼Œå½¢æˆä¸ªjsonæ•°æ®
         pkg: grunt.file.readJSON('package.json'),
         uglify: {
-            //ÎÄ¼şÍ·²¿Êä³öĞÅÏ¢
+            //æ–‡ä»¶å¤´éƒ¨è¾“å‡ºä¿¡æ¯
             options: {
-                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+                beautify: {
+                    width: 80,
+                    beautify: true
+                }
             },
-            //¾ßÌåÈÎÎñÅäÖÃ
+            //å…·ä½“ä»»åŠ¡é…ç½®
             build: {
-                //Ô´ÎÄ¼ş
+                //æºæ–‡ä»¶
                 src: 'src/hello-grunt.js',
-                //Ä¿±êÎÄ¼ş
+                //ç›®æ ‡æ–‡ä»¶
                 dest: 'build/hello-grunt-min.js'
             }
         }
     });
 
-    // ¼ÓÔØÖ¸¶¨²å¼şÈÎÎñ
+    // åŠ è½½æŒ‡å®šæ’ä»¶ä»»åŠ¡
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    // Ä¬ÈÏÖ´ĞĞµÄÈÎÎñ
+    // é»˜è®¤æ‰§è¡Œçš„ä»»åŠ¡
     grunt.registerTask('default', ['uglify']);
 };
